@@ -1,0 +1,60 @@
+/**
+* @Author: Steven M. Giangrasso
+* @Description: 3rd module of Asynchronous APEX
+* Create an Apex test class called 'LeadProcessorTest'.
+* In the test class, insert 200 Lead records, execute the 'LeadProcessor' Batch class 
+* and test that all Lead records were updated correctly.
+* The unit tests must cover all lines of code included in the LeadProcessor class, 
+* resulting in 100% code coverage.
+* Run your test class at least once (via 'Run All' tests the Developer Console) 
+* before attempting to verify this challenge.
+*
+*/
+
+@isTest
+
+public class LeadProcessorTest {
+
+    testMethod static  void testBatch() {
+
+       
+
+      List <lead> leadList = new List<lead>();
+
+      for(integer i = 0; i<200; i++)
+
+      {
+
+         Lead objLead = new Lead(
+
+                     firstName='testAccount'+i,
+
+                     lastName = 'testAccount'+i,
+
+                     LeadSource='WEB',
+
+                     Company='test company'+i
+
+                     );
+
+         leadList.add(objLead);
+
+      }
+
+      insert leadList;
+
+       Test.StartTest();
+
+     
+
+       ID batchprocessid = Database.executeBatch(new LeadProcessor());
+
+     
+
+       Test.stopTest();
+
+    }
+
+ 
+
+}
