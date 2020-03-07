@@ -1,0 +1,28 @@
+/*
+Exposing the URL of the AccountManager class via the @RestResource annotation; URL should always be unique
+A third party service would call the URL specified in the URL mapping
+https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_annotation_rest_resource.htm
+https://developer.salesforce.com/docs/atlas.en-us.apex_workbook.meta/apex_workbook/apex_rest_1.htm
+https://developer.salesforce.com/page/Creating_REST_APIs_using_Apex_REST
+*/
+@RestResource(urlMapping='/Accounts/*/contacts')
+
+//HTTPGET provides the 3rd party service with the ability to 
+//retrieve the values from the URL we are providing in the RESTResource annotations
+//Normally we would pass the parameter in the getAccount() method
+global class AccountManager {
+    @HttpGet
+    global static Account getAccount() {
+        
+        //Method that captures the whole request
+        RestRequest req = RestContext.request;
+        
+        //Will return the whole URL of the request
+        String accId = req.requestURI.substringBetween('Accounts/', '/contacts');
+        
+        //Return back only 1 Account and the list of Contacts related to that Account
+        Account acc = [SELECT Id, Name, (SELECT Id, Name FROM Contacts) 
+                       FROM Account WHERE Id = :accId];
+        return acc;
+    }
+}
