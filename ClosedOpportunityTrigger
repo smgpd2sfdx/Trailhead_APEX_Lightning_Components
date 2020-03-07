@@ -1,0 +1,31 @@
+/**
+* @Author: Steven M. Giangrasso
+* @Author: Trigger written for 2nd portion of APEX Trigger Trailhead
+* @Description: https://trailhead.salesforce.com/modules/apex_triggers/units/apex_triggers_bulk
+*/
+
+trigger ClosedOpportunityTrigger on Opportunity (after insert, after update) {
+
+    List<Task> taskList = new List<Task>();
+    
+    
+    /*With 'ClosedOpportunityTrigger' active, 
+    if an opportunity is inserted or updated with a stage of 'Closed Won', 
+    it will have a task created with the subject 'Follow Up Test Task'.*/
+    
+    for (Opportunity opp : [SELECT Id, StageName FROM Opportunity WHERE StageName = 'Closed Won' AND Id IN :Trigger.new]){
+                    
+                    
+            /*To associate the task with the opportunity, fill the 'WhatId' field with the opportunity ID.*/        
+            taskList.add(new Task(Subject = 'Follow Up Test Task',
+                                  WhatId = opp.Id));
+       
+    }
+
+    if(taskList.size()>0){
+        
+        insert taskList;
+        
+    }
+    
+}
