@@ -1,0 +1,18 @@
+/*
+@Author: Steven M. Giangrasso
+@Date: 3/7/2017
+@Description: https://trailhead.salesforce.com/modules/apex_triggers/units/apex_triggers_intro
+*/
+
+
+trigger AccountAddressTrigger on Account (before insert,before update) 
+
+{
+    for(account objAccount :trigger.new)
+    {
+        if(objAccount.Match_Billing_Address__c ==true)
+        {
+            objAccount.ShippingPostalCode = objAccount.BillingPostalCode;
+        }
+    }
+}
