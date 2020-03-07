@@ -1,0 +1,58 @@
+/*
+Name: Steven M. Giangrasso
+Date: 10/7/2016
+Description: Campaign List Controller
+
+The solution to staying responsive while waiting is that server responses are handled asynchronously. 
+What this means is, when you click the Create Expense button, 
+your client-side controller fires off a server request and then keeps processing. 
+It not only doesn’t wait for the server, it forgets it ever made the request!
+*/
+
+
+public  with sharing class CampingListController {
+
+
+/*There are only two specific things that make this method available to your Lightning Components code.
+
+The @AuraEnabled annotation before the method declaration.
+“Aura” is the name of the open source framework at the core of Lightning Components. 
+You’ve seen it used in the namespace for some of the core tags, such as <aura:component>. 
+Now you know where it comes from.
+
+The static keyword. All @AuraEnabled methods must be static methods, and either public or global scope.
+If these requirements remind you of remote methods for Visualforce’s JavaScript remoting feature, 
+that’s not a coincidence. The requirements are the same, 
+because the architecture is very similar at key points.
+
+*/
+    @AuraEnabled
+    public static List<Camping_Item__c> getItems() {
+        return [SELECT Id, Name, Price__c, Quantity__c, Packed__c, CreatedDate 
+                FROM Camping_Item__c];
+    }
+    
+    
+
+
+/*There are only two specific things that make this method available to your Lightning Components code.
+
+The @AuraEnabled annotation before the method declaration.
+“Aura” is the name of the open source framework at the core of Lightning Components. 
+You’ve seen it used in the namespace for some of the core tags, such as <aura:component>. 
+Now you know where it comes from.
+
+The static keyword. All @AuraEnabled methods must be static methods, and either public or global scope.
+If these requirements remind you of remote methods for Visualforce’s JavaScript remoting feature, 
+that’s not a coincidence. The requirements are the same, 
+because the architecture is very similar at key points.
+
+*/
+    
+    @AuraEnabled
+    public static Camping_Item__c saveItem(Camping_Item__c item) {
+        // Perform isUpdatable() checking first, then
+        upsert item;
+        return item;
+    }
+}
