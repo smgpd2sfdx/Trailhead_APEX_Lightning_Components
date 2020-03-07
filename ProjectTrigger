@@ -1,0 +1,57 @@
+/*
+Trigger on Project object on After update  event.
+
+Synchronize Outbound Billing Data
+
+WHY -- Round wants to use its Salesforce org to notify Square Peg when a project is ready to bill. 
+
+HOW -- Your task is to trigger an outbound SOAP call anytime the project Status in their Salesforce org is set to Billable. 
+This then triggers Square Peg’s legacy billing system to create a new invoice and bill the customer.
+
+REason behind we choose after trigger and update. So that we can validate all the validation rules, workflows. After all things are successful then
+only call SOAP api.
+
+
+*/
+
+/*
+This trigger is created on the Project__c object to as an After Updated trigger which
+will fire when the Status (proj.Status__c) of the Project is updated to a "Billable" status.
+*/
+trigger ProjectTrigger on Project__c (after update) {
+    
+    //This trigger is ONLY executed AFTER the Project record is UPDATED
+    if(Trigger.isAfter && Trigger.isUpdate){
+    
+        /*
+        Enhanced FOR loop to traverse over the list of records 
+        which update has been fired.
+        The Trigger.new code is a list/data structure which gives 
+        you all the records updated in this particular thread
+        This is used for bulkification purposes
+       */
+        for(Project__c proj : Trigger.new){ 
+        
+            // check if the status is changes to billable from running    
+            if(proj.Status__c.equals('Billable'))
+            
+            
+            /*
+            As a best practice, we should always write the logic of our code in a Trigger Handler
+            as opposed to the Trigger itself.
+            If you want to control the user context (with sharing and without sharing), 
+            write the code in a trigger handler
+            
+            BillingCalloutService is the APEX Trigger Handler. Referencing method from another class.
+            callBillingService is the method of the BillingCalloutService class that we are calling.
+            ProjectRef__c is an external ID;  this reference should be in the 3rd party system as well.
+            Biillable Amount is a double.
+            
+            */
+            
+            {
+            BillingCalloutService.callBillingService(proj.ProjectRef__c, proj.Billable_Amount__c); 
+            }
+        }
+    } 
+}
